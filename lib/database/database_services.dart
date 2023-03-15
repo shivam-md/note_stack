@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
-import 'package:note_stack/models/note.dart';
+import 'package:note_stack/Provider/database_provider.dart';
+import 'package:note_stack/models/note_structure.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-class DatabaseServices extends ChangeNotifier {
+class DatabaseServices{
   // static named constructor.
   static final DatabaseServices instance = DatabaseServices._init();
   // private constructor
@@ -11,10 +12,6 @@ class DatabaseServices extends ChangeNotifier {
 
   // database instance
   static Database? _database;
-
-  static List<Note> _list = [];
-
-  List<Note> get notesList => _list;
 
   Future<Database> get database async {
     if (_database != null) {
@@ -53,6 +50,8 @@ class DatabaseServices extends ChangeNotifier {
     ''');
   }
 
+  //Future databaseReference
+
   // Creating Notes inside our database table
   Future<Note> create(Note note) async {
     final db = await database;
@@ -61,8 +60,7 @@ class DatabaseServices extends ChangeNotifier {
     final id = await db.insert(
         TABLE_NAME, note.toJson()); // returns unique id for each insert
     final create = note.copy(id: id);
-    readAllNotes();
-    //notifyListeners();
+    DatabaseProvider().mapList;
     return create;
   }
 
@@ -86,14 +84,13 @@ class DatabaseServices extends ChangeNotifier {
   }
 
   // Reading all the notes inside of the notes table
-  Future<void> readAllNotes() async {
-    final db = await database;
+  Future<List<Note>> readAllNotes() async {
+    final db = await instance.database;
     const String orderBy = '${NoteFields.time} ASC';
     // final result = await db.rawQuery('SELECT * FROM $tableNotes ORDER BY $orderBy'); // same as below code just sql query
     final result = await db.query(TABLE_NAME, orderBy: orderBy);
     // map our result and then convert them to note from a json object and returns list of notes
-    _list = result.map((json) => Note.fromJson(json)).toList();
-    notifyListeners();
+    return result.map((json) => Note.fromJson(json)).toList();
   }
 
   // updating a note at a particular note using its unique id.
@@ -106,7 +103,7 @@ class DatabaseServices extends ChangeNotifier {
       where: '${NoteFields.id} = ?',
       whereArgs: [note.id],
     );
-    readAllNotes();
+    DatabaseProvider().mapList;
     return update;
   }
 
@@ -119,13 +116,12 @@ class DatabaseServices extends ChangeNotifier {
       where: '${NoteFields.id} = ?',
       whereArgs: [id],
     );
-    readAllNotes();
     return delete;
   }
-
   // close database
   static Future close() async {
     final db = await instance.database;
     db.close();
   }
+
 }

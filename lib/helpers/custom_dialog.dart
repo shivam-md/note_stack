@@ -6,7 +6,8 @@ class CustomDialogBox extends StatelessWidget {
       required this.text,
       this.firstButton,
       this.secondButton,
-      required this.areButtonsFunctional}) : super(key: key);
+      required this.areButtonsFunctional})
+      : super(key: key);
 
   final Widget text;
   final Widget? firstButton;
@@ -28,10 +29,11 @@ class CustomDialogBox extends StatelessWidget {
         title: text,
         actions: [
           ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Close"),),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Close"),
+          ),
         ],
       );
     }

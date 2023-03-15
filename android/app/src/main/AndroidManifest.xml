@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.crimsonchimera.note_stack">
+    package="com.crimsonchimera.note_stack"
+    >
    <application
-        android:label="note_stack"
+        android:label="NoteStack"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -31,4 +32,5 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
 </manifest>
